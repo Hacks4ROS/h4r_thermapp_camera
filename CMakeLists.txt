@@ -16,6 +16,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS system thread)
 
+find_package(PkgConfig REQUIRED)
+pkg_search_module(LIBUSB1 REQUIRED libusb-1.0)
+include_directories(SYSTEM ${LIBUSB1_INCLUDE_DIRS})
+
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -112,7 +116,10 @@ add_library(thermapp_camera_bulk
 )
 
 ## Declare a cpp executable
-add_executable(thermapp_camera_node src/thermapp_camera_node.cpp src/ThermAppRos.cpp)
+add_executable(thermapp_camera_node 
+src/thermapp_camera_node.cpp 
+src/ThermAppRos.cpp
+src/ThermAppCameraBulk.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
@@ -120,6 +127,7 @@ add_executable(thermapp_camera_node src/thermapp_camera_node.cpp src/ThermAppRos
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(thermapp_camera_node
+   ${LIBUSB1_LIBRARIES}
    ${catkin_LIBRARIES}
 )
 
