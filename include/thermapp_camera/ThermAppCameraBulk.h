@@ -8,12 +8,32 @@
 #ifndef THERMAPP_CAMERA_SRC_THERMAPPCAMERABULK_H_
 #define THERMAPP_CAMERA_SRC_THERMAPPCAMERABULK_H_
 
-namespace ThermApp {
+#include <cv.h>
+#include <boost/thread.hpp>
+#include <libusb-1.0/libusb.h>
+#include <iostream>
 
-class ThermAppCameraBulk {
+
+namespace ThermApp {
+using namespace std;
+
+class ThermAppCameraBulk
+{
+
+	bool dev_open;
+
+	//Libusb variables
+	libusb_context *context;
+    libusb_device **list;
+    libusb_device_handle *handle;
+
 public:
 	ThermAppCameraBulk();
 	virtual ~ThermAppCameraBulk();
+
+	bool openDevice();
+	void closeDevice();
+	void requestImage(cv::Mat& image);
 };
 
 } /* namespace ThermApp */

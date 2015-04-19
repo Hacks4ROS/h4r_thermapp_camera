@@ -16,6 +16,7 @@
 #include <dynamic_reconfigure/server.h>
 #include <thermapp_camera/thermapp_camera_nodeConfig.h>
 #include <boost/bind.hpp>
+#include <thermapp_camera/ThermAppCameraBulk.h>
 
 namespace ThermApp {
 

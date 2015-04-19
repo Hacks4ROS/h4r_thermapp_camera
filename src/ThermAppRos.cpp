@@ -37,6 +37,8 @@ void ThermAppRos::run()
 {
 	ros::Rate loop_rate(10);
 
+	ThermApp::ThermAppCameraBulk usb_bulk;
+	usb_bulk.openDevice();
 
 	while(ros::ok())
 	{
