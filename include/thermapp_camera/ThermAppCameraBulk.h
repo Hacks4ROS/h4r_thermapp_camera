@@ -12,6 +12,7 @@
 #include <boost/thread.hpp>
 #include <libusb-1.0/libusb.h>
 #include <iostream>
+#include <inttypes.h>
 
 
 namespace ThermApp {
@@ -19,6 +20,12 @@ using namespace std;
 
 class ThermAppCameraBulk
 {
+
+	enum
+	{
+	   ENDPOINT_DOWN = 0x81,
+	   ENDPOINT_UP = 0x02,
+	};
 
 	bool dev_open;
 
