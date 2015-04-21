@@ -1,5 +1,5 @@
 <launch>
 	<node name="rqt_thermapp" pkg="rqt_gui" type="rqt_gui" 
-		args="--perspective-file $(find thermapp_camera)/perspectives/thermapp.perspective" >
+		args="--perspective-file $(find thermapp_camera)/perspectives/ThermApp.perspective" >
 	</node>	
 </launch>
