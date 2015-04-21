@@ -28,6 +28,8 @@ class ThermAppCameraBulk
 	};
 
 	bool dev_open;
+	boost::thread* thread_stream;
+	boost::mutex mutex_stream_stop;
 
 	//Libusb variables
 	libusb_context *context;
@@ -38,9 +40,21 @@ public:
 	ThermAppCameraBulk();
 	virtual ~ThermAppCameraBulk();
 
+
+
+
+
+
 	bool openDevice();
 	void closeDevice();
-	void requestImage(cv::Mat& image);
+
+	void streamer();
+
+
+
+
+
+
 };
 
 } /* namespace ThermApp */
