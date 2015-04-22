@@ -203,22 +203,9 @@ void ThermAppRos::run()
 								}
 
 								if(h==9)
-								{
-									std::cout<<"CLEAR after "<<std::dec<<im_data.size()<<std::endl;
+								{;
 									h=0;
 									im_data.clear();
-
-									std::cout<<"                      HEADER: ";
-									for(std::vector<uint8_t>::iterator it3=it; it3!=it+64;it3++)
-									{
-										std::cout<<std::hex<<(unsigned)*it3;
-									}
-
-									unsigned numberX=*(it+30); //Package length???
-									unsigned numberY=*(it+52); //Package Number
-
-									std::cout<<std::endl<<" ----------------- > "<<std::dec<<numberX<<" "<<numberY<<std::endl;
-									it=it+64;
 								}
 
 							}
