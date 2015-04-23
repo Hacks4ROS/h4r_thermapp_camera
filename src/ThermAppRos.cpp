@@ -8,6 +8,7 @@
 #include "ThermAppRos.h"
 #include <libusb-1.0/libusb.h>
 #include <sensor_msgs/image_encodings.h>
+#include <iomanip>      // std::setw
 
 
 namespace ThermApp {
@@ -41,25 +42,17 @@ void ThermAppRos::reconfigCb(thermapp_camera::thermapp_camera_nodeConfig &config
 void ThermAppRos::run()
 {
 
-	cv_bridge::CvImage out_msg;
-
-//	ThermApp::ThermAppCameraBulk usb_bulk;
-//	if(usb_bulk.openDevice())
-//	{
-//		ROS_ERROR("Could not open device!");
-//		return;
-//	}
-
 
 
 	libusb_context *context=NULL;
     libusb_device **list=NULL;
-    libusb_device_handle *handle=NULL;
+
     libusb_init(&context);
     libusb_set_debug(context,3);
 
 
     ssize_t count = libusb_get_device_list(context, &list);
+    libusb_device_handle *handle=NULL;
 
 
     for (size_t idx = 0; idx < count; ++idx)
@@ -73,7 +66,6 @@ void ThermAppRos::run()
 
         if(desc.idVendor==0x1772 && desc.idProduct==0x0002)
         {
-
             libusb_open(device,&handle);
             libusb_claim_interface(handle,0);
         }
@@ -144,43 +136,33 @@ void ThermAppRos::run()
 			unsigned int skipped;
 
 
-			cv::Mat color;
-			color.create(288,384, CV_8UC3);
 			std::vector<uint8_t> im_data;
-
-			unsigned char config[64] =
-			{
-				0xa5, 0xa5, 0xa5, 0xa5, 0xa5, 0xa5, 0xd5, 0xa5,
-				0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-				0x00, 0x00,
-
-				/*Resolution twice ->*/0x20, 0x01, 0x80, 0x01,/**/ 0x20, 0x01,	0x80, 0x01,/**/
-
-				0x19, 0x00,	0x00, 0x00, 0x00, 0x00, 0xae, 0x07, 0x00, 0x00,
-				/*Range ->*/0x8f, 0x05, 0xa2, 0x08,	0x6d, 0x0b, 0x85, 0x0b,	0x00, 0x00, 0x00, 0x00,
-				0x98, 0x09, 0x40, 0x00,	0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0xff, 0x0f
-			};
-			ros::Time current_start=ros::Time::now();
-			ros::Duration loop_time(0,1000000/8.7);
 			while(ros::ok())
 			{
 
+				unsigned char config[64] =
+				{
+					0xa5, 0xa5, 0xa5, 0xa5, 0xa5, 0xa5, 0xd5, 0xa5,	0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+					0x00, 0x00,
+
+					/*Resolution twice ->*/0x20, 0x01, 0x80, 0x01,/**/ 0x20, 0x01,	0x80, 0x01,/**/
 
 
 
-					actual_length=0;
+					0x19, 0x00,	0x00, 0x00, 0x00, 0x00,
+					0xae, 0x07, 0x00, 0x00,
+					/*Range ->*/0x8f, 0x05, 0xa2, 0x08,	0x6d, 0x0b, 0x85, 0x0b,	0x00, 0x00, 0x00, 0x00,
+					0x98, 0x09, 0x40, 0x00,	0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0xff, 0x0f
+				};
+
+
+				actual_length=0;
 
 					libusb_bulk_transfer(handle, ENDPOINT_UP, config,
-							64, &actual_length, 1);
+							64, &actual_length, 30);
 					actual_length=0;
-
-					ros::Duration d=ros::Time::now()-current_start;
-					//ROS_INFO_STREAM(d.sec<<"--"<<d.nsec);
-					if(d>=loop_time)
-					{
-						current_start=ros::Time::now();
-						int a = libusb_bulk_transfer(handle, ENDPOINT_DOWN, dataDown,
-								sizeof(dataDown), &actual_length, 120);
+					int a = libusb_bulk_transfer(handle, ENDPOINT_DOWN, dataDown,
+							sizeof(dataDown), &actual_length, 120);
 
 
 					std::vector<uint8_t> usb_data(dataDown, dataDown+actual_length);
@@ -203,9 +185,22 @@ void ThermAppRos::run()
 								}
 
 								if(h==9)
-								{;
+								{
+									std::cout<<"CLEAR after "<<std::dec<<im_data.size()<<std::endl;
 									h=0;
 									im_data.clear();
+
+									std::cout<<"                      HEADER: ";
+									for(std::vector<uint8_t>::iterator it3=it; it3!=it+64;it3++)
+									{
+										std::cout<<std::hex<<(unsigned)*it3;
+									}
+
+									unsigned numberX=*(it+30); //Package length???
+									unsigned numberY=*(it+52); //Package Number
+
+									std::cout<<std::endl<<" ----------------- > "<<std::dec<<numberX<<" "<<numberY<<std::endl;
+									it=it+64;
 								}
 
 							}
@@ -219,7 +214,8 @@ void ThermAppRos::run()
 						{
 
 							cv::Mat myuv(288,384, CV_16UC1, im_data.data());
-
+							cv::Mat color;
+							color.create(288,384, CV_8UC3);
 
 							myuv*=20;
 
@@ -232,117 +228,48 @@ void ThermAppRos::run()
 									color.at<cv::Vec3b>(row,col)[0]=myuv.at<unsigned short>(row,col)/100;
 									color.at<cv::Vec3b>(row,col)[1]=255;
 									color.at<cv::Vec3b>(row,col)[2]=255;
-
-									if(row==288*3/4/2 && col==384/2)
-									{
-										unsigned short value=myuv.at<unsigned short>(row,col);
-										//value=((value&0xFF)<<8) | ((value&0xFF00)>>8);
-
-
-										printf("%0.2X -> %i\n",value, value);
-									}
-
 								}
 							}
 
 							cv::cvtColor(color,color,CV_HSV2RGB);
 
-							color.at<cv::Vec3b>(288/2,384/2)[0]=0;
-							color.at<cv::Vec3b>(288/2,384/2)[1]=0;
-							color.at<cv::Vec3b>(288/2,384/2)[2]=0;
-							cv::circle(color,cv::Point(288/4,384/2),10,cv::Scalar(255,0,0));
-
-							im_data.clear();
+//							color.at<cv::Vec3b>(288/2,384/2)[0]=0;
+//							color.at<cv::Vec3b>(288/2,384/2)[1]=0;
+//							color.at<cv::Vec3b>(288/2,384/2)[2]=0;
+//							cv::circle(color,cv::Point(288/4,384/2),10,cv::Scalar(255,0,0));
 
 
-							cv_bridge::CvImagePtr imgPtrThermal, imgPtrRGB;
 
+							ROS_INFO("FRAME");
 
+							cv_bridge::CvImage out_msg;
 							out_msg.header.seq++;
-							out_msg.header.stamp=ros::Time::now();
 							out_msg.header.frame_id="therm_app";
-							out_msg.header.seq++;// Same timestamp and tf frame as input image
-							out_msg.encoding = sensor_msgs::image_encodings::BGR8; // Or whatever
+							out_msg.encoding = sensor_msgs::image_encodings::BGR8;
 							out_msg.image    = color; // Your cv::Mat
-
-							ROS_INFO("PUBLISH!");
+							out_msg.header.stamp=ros::Time::now();
+							out_msg.header.seq++;// Same timestamp and tf frame as input image
 							pub_debug_image.publish(out_msg.toImageMsg());
 
-							std::cout<<im_data.size()<<std::endl;
 
-							ros::spinOnce();
+
+							std::cout<<im_data.size()<<std::endl;
+							im_data.clear();
+
 						}
 
 
 					}//FOR usb_data
-					}
 
-
+					printf("\nEND-PACKAGE  %i\n",actual_length);
 
 
 
 			}//WHILE
 
 
+	}
 
-			return;
-//	while(ros::ok())
-//	{
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//		cv::Mat img_rgb;
-//		cv::Mat img_thermal;
-//
-//
-//
-//		usb_bulk.streamer();
-//
-////		sensor_msgs::Image image;
-////		sensor_msgs::CameraInfo info;
-//
-//		//img_thermal;
-//
-//
-//
-//		try
-//		{
-//			//imgPtrRGB->image = img_rgb;//cv_bridge::toCvCopy(depth_msg, "16UC1");
-//			//imgPtrThermal->image = img_thermal;// cv_bridge::toCvCopy(rgb_msg, "bgr8");
-//		} catch (cv_bridge::Exception& e)
-//		{
-//			ROS_ERROR("cv_bridge exception: %s", e.what());
-//			return;
-//		}
-//
-//		//sensor_msgs::CameraInfo info;
-//
-//		ROS_INFO("Spin!");
-//		//pub_debug_image.publish(imgPtrRGB->toImageMsg());
-//		//pub_image.publish(img_rgb,,ros::now());
-//		ros::spinOnce();
-//		loop_rate.sleep();
-//	}
-//	//usb_bulk.closeDevice();
-//
-
-}
 
 
 } /* namespace ThermApp */
