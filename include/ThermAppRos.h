@@ -16,9 +16,10 @@
 #include <cv_bridge/cv_bridge.h>
 #include <dynamic_reconfigure/server.h>
 #include <thermapp_camera/thermapp_camera_nodeConfig.h>
+#include <thermapp_camera/libthermapp.h>
 #include <boost/bind.hpp>
 
-namespace ThermApp {
+namespace thermapp_camera {
 
 class ThermAppRos {
 private:
@@ -34,12 +35,16 @@ private:
 	ros::NodeHandle nh;
 
     image_transport::ImageTransport it;
-    image_transport::CameraPublisher pub_cam_thermal;
+    image_transport::CameraPublisher pub_cam;
 
-    image_transport::Publisher pub_debug_image;
+    image_transport::Publisher pub_image;
 
     dynamic_reconfigure::Server<thermapp_camera::thermapp_camera_nodeConfig> reconfServer;
     dynamic_reconfigure::Server<thermapp_camera::thermapp_camera_nodeConfig>::CallbackType reconfCbType;
+
+    //ThermAppCam Stuff
+    ThermApp *therm;
+
 
 public:
     void reconfigCb(thermapp_camera::thermapp_camera_nodeConfig &config, uint32_t level);

@@ -5,8 +5,8 @@ int main(int argc, char** argv)
 {
 	ros::init(argc, argv, "thermapp_camera_node");
 
-	ThermApp::ThermAppRos ThermApp;
-	ThermApp.run();
+	thermapp_camera::ThermAppRos node;
+	node.run();
 
 	return 0;
 }
