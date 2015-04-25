@@ -11,20 +11,28 @@
 #include <ros/ros.h>
 #include <ros/ros.h>
 #include <image_transport/image_transport.h>
-#include <opencv2/highgui/highgui.hpp>
 #include <cv.h>
 #include <cv_bridge/cv_bridge.h>
+#include <opencv2/highgui/highgui.hpp>
+
 #include <dynamic_reconfigure/server.h>
+
 #include <thermapp_camera/thermapp_camera_nodeConfig.h>
 #include <thermapp_camera/libthermapp.h>
+
 #include <boost/bind.hpp>
+#include <boost/thread.hpp>
+
+#include <sensor_msgs/image_encodings.h>
+#include <thermapp_camera/libthermapp.h>
+
 
 namespace thermapp_camera {
 
 class ThermAppRos {
 private:
 
-	boost::mutex reconf_mutex;
+	boost::mutex mutex_reconf;
 
 	//Configure Options
 
@@ -44,6 +52,9 @@ private:
 
     //ThermAppCam Stuff
     ThermApp *therm;
+
+
+    void getFrames();
 
 
 public:

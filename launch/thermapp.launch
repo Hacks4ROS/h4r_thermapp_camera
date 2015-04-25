@@ -1,5 +1,5 @@
 <launch>
-	<node name="thermapp_camera" pkg="thermapp_camera" type="thermapp_camera_node" >
+	<node name="thermapp_camera" pkg="thermapp_camera" type="thermapp_camera_node" output="screen">
 			
 	</node>
 	

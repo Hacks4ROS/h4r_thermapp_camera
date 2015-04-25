@@ -6,9 +6,6 @@
  */
 
 #include "ThermAppRos.h"
-#include <libusb-1.0/libusb.h>
-#include <sensor_msgs/image_encodings.h>
-#include <thermapp_camera/libthermapp.h>
 
 
 namespace thermapp_camera {
@@ -18,8 +15,6 @@ ThermAppRos::ThermAppRos()
  nh("~"),
  it(n)
 {
-	//int a;
-	//nh.param("narf",a,1);
 
 
 	pub_cam=it.advertiseCamera("thermapp_camera/image", 1);
@@ -34,53 +29,83 @@ ThermAppRos::~ThermAppRos() {}
 
 void ThermAppRos::reconfigCb(thermapp_camera::thermapp_camera_nodeConfig &config, uint32_t level)
 {
-	reconf_mutex.lock();
-	int temp_1=config.temp_1;
-	int temp_2=config.temp_2;
-	reconf_mutex.unlock();
+	mutex_reconf.lock();
+
+		therm->cfg->VoutA=config.voltage_A/2048*2.5;
+		therm->cfg->VoutC=config.voltage_C/2048*2.5;
+		therm->cfg->VoutD=config.voltage_D/2048*2.5;
+		therm->cfg->VoutE=config.voltage_E/2048*2.5;
+
+	mutex_reconf.unlock();
+}
+
+void ThermAppRos::getFrames()
+{
+	while(ros::ok())
+	{
+		//Create cv::bridge
+		cv_bridge::CvImage image_brdg;
+		image_brdg.encoding = sensor_msgs::image_encodings::TYPE_16UC1;
+		image_brdg.header.frame_id="therm_app";
+
+		//Create Mat for image
+		cv::Mat thermal;
+
+	    short frame[PIXELS_DATA_SIZE];
+	    mutex_reconf.lock();
+	    bool frame_ok=thermapp_GetImage(therm, frame);
+	    mutex_reconf.unlock();
+
+	    if(frame_ok)
+	    {
+	    	thermal=cv::Mat(cv::Size(384,288), CV_16UC1, &frame);
+			image_brdg.image = thermal;
+			image_brdg.header.stamp=ros::Time::now();
+			image_brdg.header.seq++;
+
+			pub_image.publish(image_brdg.toImageMsg());
+			boost::this_thread::sleep(boost::posix_time::milliseconds(100));
+	    }
+
+
+	}
 }
 
 void ThermAppRos::run()
 {
-	//Create cv::bridge
-	cv_bridge::CvImage image_brdg;
-	image_brdg.encoding = sensor_msgs::image_encodings::BGR8;
-	image_brdg.header.frame_id="therm_app";
-
-	//Create Mat for image
-	cv::Mat img;
-
 
     therm = thermapp_initUSB();
     if(therm == NULL) {
     	ROS_INFO("thermapp_initUSB Error");
     }
 
-    if(thermapp_USB_checkForDevice(therm, VENDOR, PRODUCT) == -1){
+    if(thermapp_USB_checkForDevice(therm, VENDOR, PRODUCT) == -1)
+    {
        ROS_ERROR("thermapp_USB_checkForDevice Error");
+       exit(1);
+    }else
+    {
+    	ROS_INFO("thermapp_FrameRequest_thread");
+        thermapp_FrameRequest_thread(therm);
     }
-
 
 
     ROS_INFO("starting thermapp_FrameRequest_thread");
     //Run thread
-    thermapp_FrameRequest_thread(therm);
+    //thermapp_FrameRequest_thread(therm);
+
+	 boost::thread* thread_frames = new boost::thread(boost::bind(&ThermAppRos::getFrames,this));
 
 
 	while(ros::ok())
 	{
-		reconf_mutex.lock();
-		//Variables from dynamic reconfigure
-		reconf_mutex.unlock();
 
-		image_brdg.image    = img; // Your cv::Mat
-		image_brdg.header.stamp=ros::Time::now();
-		image_brdg.header.seq++;
-
-		pub_image.publish(image_brdg.toImageMsg());
 
 		ros::spinOnce();
 	}
+
+	thread_frames->join();
+	delete thread_frames;
 
 }//RUN
 
