@@ -5,8 +5,8 @@
  *      Author: cyborg-x1
  */
 
-#ifndef THERMAPP_CAMERA_SRC_THERMAPPROS_H_
-#define THERMAPP_CAMERA_SRC_THERMAPPROS_H_
+#ifndef THERMAPPROS_H_
+#define THERMAPPROS_H_
 
 #include <ros/ros.h>
 #include <ros/ros.h>
@@ -65,4 +65,4 @@ public:
 
 } /* namespace ThermApp */
 
-#endif /* THERMAPP_CAMERA_SRC_THERMAPPROS_H_ */
+#endif /* THERMAPPROS_H_ */
