@@ -27,7 +27,7 @@ ThermAppRos::ThermAppRos()
 ThermAppRos::~ThermAppRos() {}
 
 
-void ThermAppRos::reconfigCb(h4r_thermapp_camera::thermapp_camera_nodeConfig &config, uint32_t level)
+void ThermAppRos::reconfigCb(h4r_thermapp_camera::h4r_thermapp_camera_nodeConfig &config, uint32_t level)
 {
 	mutex_reconf.lock();
 

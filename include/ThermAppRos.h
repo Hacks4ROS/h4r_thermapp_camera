@@ -17,7 +17,7 @@
 
 #include <dynamic_reconfigure/server.h>
 
-#include <h4r_thermapp_camera/thermapp_camera_nodeConfig.h>
+#include <h4r_thermapp_camera/h4r_thermapp_camera_nodeConfig.h>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 
@@ -46,8 +46,8 @@ private:
 
     image_transport::Publisher pub_image;
 
-    dynamic_reconfigure::Server<h4r_thermapp_camera::thermapp_camera_nodeConfig> reconfServer;
-    dynamic_reconfigure::Server<h4r_thermapp_camera::thermapp_camera_nodeConfig>::CallbackType reconfCbType;
+    dynamic_reconfigure::Server<h4r_thermapp_camera::h4r_thermapp_camera_nodeConfig> reconfServer;
+    dynamic_reconfigure::Server<h4r_thermapp_camera::h4r_thermapp_camera_nodeConfig>::CallbackType reconfCbType;
 
     //ThermAppCam Stuff
     ThermApp *therm;
@@ -55,9 +55,8 @@ private:
 
     void getFrames();
 
-
 public:
-    void reconfigCb(h4r_thermapp_camera::thermapp_camera_nodeConfig &config, uint32_t level);
+    void reconfigCb(h4r_thermapp_camera::h4r_thermapp_camera_nodeConfig &config, uint32_t level);
 	ThermAppRos();
 	virtual ~ThermAppRos();
 	void run();
