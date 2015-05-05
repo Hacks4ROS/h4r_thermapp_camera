@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(thermapp_camera)
+project(h4r_thermapp_camera)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED COMPONENTS
@@ -20,7 +20,7 @@ pkg_search_module(LIBUSB1 REQUIRED libusb-1.0)
 include_directories(SYSTEM ${LIBUSB1_INCLUDE_DIRS})
 
 #Generate dynamic reconfigure stuff
-generate_dynamic_reconfigure_options(cfg/thermapp_camera_node.cfg)
+generate_dynamic_reconfigure_options(cfg/h4r_thermapp_camera_node.cfg)
 
 catkin_package(
    INCLUDE_DIRS include

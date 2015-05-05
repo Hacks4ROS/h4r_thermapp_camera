@@ -17,14 +17,13 @@
 
 #include <dynamic_reconfigure/server.h>
 
-#include <thermapp_camera/thermapp_camera_nodeConfig.h>
-#include <thermapp_camera/libthermapp.h>
-
+#include <h4r_thermapp_camera/thermapp_camera_nodeConfig.h>
 #include <boost/bind.hpp>
 #include <boost/thread.hpp>
 
 #include <sensor_msgs/image_encodings.h>
-#include <thermapp_camera/libthermapp.h>
+
+#include "h4r_thermapp_camera/libthermapp.h"
 
 
 namespace thermapp_camera {
@@ -47,8 +46,8 @@ private:
 
     image_transport::Publisher pub_image;
 
-    dynamic_reconfigure::Server<thermapp_camera::thermapp_camera_nodeConfig> reconfServer;
-    dynamic_reconfigure::Server<thermapp_camera::thermapp_camera_nodeConfig>::CallbackType reconfCbType;
+    dynamic_reconfigure::Server<h4r_thermapp_camera::thermapp_camera_nodeConfig> reconfServer;
+    dynamic_reconfigure::Server<h4r_thermapp_camera::thermapp_camera_nodeConfig>::CallbackType reconfCbType;
 
     //ThermAppCam Stuff
     ThermApp *therm;
@@ -58,7 +57,7 @@ private:
 
 
 public:
-    void reconfigCb(thermapp_camera::thermapp_camera_nodeConfig &config, uint32_t level);
+    void reconfigCb(h4r_thermapp_camera::thermapp_camera_nodeConfig &config, uint32_t level);
 	ThermAppRos();
 	virtual ~ThermAppRos();
 	void run();
