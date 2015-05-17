@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>h4r_thermapp_camera</name>
+  <version>0.0.0</version>
+  <description>The thermapp_camera package provides a library and a node for the
+  	Opgal® ThermApp® Android Thermal Camera</description>
+
+  <author  email="cyborgx1@gmail.com">Christian Holl</author>
+  <maintainer email="cyborgx1@gmail.com">Christian Holl</maintainer>
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+ 
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <run_depend>dynamic_reconfigure</run_depend>
+  <run_depend>image_transport</run_depend>
+  <run_depend>roscpp</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>cv_bridge</run_depend>
+
+  <export>
+
+  </export>
+</package>

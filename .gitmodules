@@ -1,0 +1,3 @@
+[submodule "src/ThermAppCam"]
+	path = src/ThermAppCam
+	url = git@github.com:Hacks4ROS-forks/ThermAppCam.git
