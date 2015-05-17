@@ -2,8 +2,8 @@
 Changelog for package h4r_thermapp_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Forthcoming
------------
+0.0.1 (2015-05-17)
+------------------
 * fix License information
 * add install to CMakeLists
 * update ReadMe with install information
