@@ -3,8 +3,9 @@
   <name>h4r_thermapp_camera</name>
   <version>0.0.0</version>
   <description>The thermapp_camera package provides a library and a node for the
-  	Opgal ThermApp® Android Thermal Camera</description>
+  	Opgal® ThermApp® Android Thermal Camera</description>
 
+  <author  email="cyborgx1@gmail.com">Christian Holl</author>
   <maintainer email="cyborgx1@gmail.com">Christian Holl</maintainer>
 
   <license>GPLv3</license>
