@@ -1,0 +1,9 @@
+SUBSYSTEM!="usb|usb_device", GOTO="opgal_rules_end"
+ACTION!="add", GOTO="opgal_rules_end"
+
+# Opgal Camera
+ATTRS{idVendor}=="1772", ATTRS{idProduct}=="0002", MODE="0666"
+#,SYMLINK+="opgal_cam"
+
+LABEL="opgal_rules_end"
+
