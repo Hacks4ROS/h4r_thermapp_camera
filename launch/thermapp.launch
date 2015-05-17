@@ -1,7 +1,5 @@
 <launch>
-	<node name="thermapp_camera" pkg="thermapp_camera" type="thermapp_camera_node" output="screen">
-			
-	</node>
+	<node name="thermapp_camera" pkg="thermapp_camera" type="thermapp_camera_node" output="screen"/>
 	
 	<node name="rqt_thermapp" pkg="rqt_gui" type="rqt_gui" 
 		args="--perspective-file $(find thermapp_camera)/perspectives/ThermApp.perspective" >
