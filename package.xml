@@ -28,8 +28,8 @@
   <run_depend>cv_bridge</run_depend>
   
   <!-- LibUSB -->
-  <build_depend>libusb-1.0-0-dev</build_depend>
-  <run_depend>libusb-1.0-0</run_depend>
+  <build_depend>libusb-1.0-dev</build_depend>
+  <run_depend>libusb-1.0</run_depend>
   
   <export>
 
