@@ -29,7 +29,7 @@
   
   <!-- LibUSB -->
   <build_depend>libusb-1.0-0-dev</build_depend>
-  <exec_depend>libusb-1.0-0</exec_depend>
+  <run_depend>libusb-1.0-0</run_depend>
   
   <export>
 
