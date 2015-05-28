@@ -2,6 +2,12 @@
 Changelog for package h4r_thermapp_camera
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+Forthcoming
+-----------
+* fix exec to run depend
+* add missing system dependencies to package.xml
+* Contributors: Christian Holl
+
 0.0.1 (2015-05-17)
 ------------------
 * fix License information
