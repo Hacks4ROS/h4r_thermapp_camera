@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>h4r_thermapp_camera</name>
-  <version>0.0.2</version>
+  <version>0.0.3</version>
   <description>The thermapp_camera package provides a library and a node for the
   	Opgal® ThermApp® Android Thermal Camera</description>
 
